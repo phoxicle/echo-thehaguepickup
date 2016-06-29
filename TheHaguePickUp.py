@@ -242,13 +242,25 @@ class PickUpTranslator:
     @staticmethod
     def translate(type_dutch, date_dutch):
         print("Translating type '{}' and date '{}'".format(type_dutch, date_dutch))
-        # Date Ex: donderdag 30 juni
+        # Date Ex: Donderdag 30 juni
+        # Type Ex: Papier
+        type_dutch = type_dutch.lower()
+        date_dutch = date_dutch.lower()
+
         [dayofweek_dutch, numday, month_dutch] = date_dutch.split()
+
+        if type_dutch in PickUpTranslator.types:
+            type_english = PickUpTranslator.types[type_dutch]
+        else:
+            print("Falling back to dutch type")
+            type_english = type_dutch
+        
         translated = '{} on {}, {} {};'.format(
-            PickUpTranslator.types[type_dutch.lower()], 
+            type_english, 
             PickUpTranslator.days[dayofweek_dutch.lower()], 
             PickUpTranslator.months[month_dutch.lower()] ,
             numday)
+        
         print("Translated to: " + translated)
         return translated
 
