@@ -56,6 +56,8 @@ def on_intent(intent_request, session):
     # Dispatch to intent handlers
     if intent_name == "WhenIntent":
         return get_when_response(intent, session)
+    elif intent_name == "AMAZON.StopIntent" or intent_name == "AMAZON.CancelIntent":
+        return
     else:
         raise ValueError("Invalid intent")
 
@@ -91,7 +93,6 @@ def get_when_response(intent, session):
 
         zip_code = intent['slots']['ZipNumber']['value'] + intent['slots']['ZipFirstLetter']['value'] + intent['slots']['ZipSecondLetter']['value'] 
         print("Got new zip code: " + zip_code)
-        session_attributes['zip_code'] = zip_code
     elif (session.get('attributes', {}) and "zip_code" in session.get('attributes', {})):
 
         zip_code = session['attributes']['zip_code']
@@ -104,9 +105,10 @@ def get_when_response(intent, session):
         print("Got house number: " + house_number)
 
     if zip_code:
-        
+        session_attributes['zip_code'] = zip_code
 
-       
+        if house_number:
+            print("Got house number: " + house_number + ". Calculate response")
             # No reason to store house_number in session since we always do zip first. Just give them the response.
             speech_output = calculate_when_response(zip_code, house_number)
             reprompt_text = ""
